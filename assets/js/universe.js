@@ -28,20 +28,20 @@ function parseDate(s){const t=Date.parse(String(s).replace(' ','T'));return Numb
 function dateLabel(ms){return new Intl.DateTimeFormat('id-ID',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(ms))}
 async function api(params){const u=new URL(C.api,location.href);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));const r=await fetch(u,{headers:{Accept:'application/json'}}),txt=await r.text();let j;try{j=JSON.parse(txt)}catch{throw new Error('API bukan JSON: '+txt.slice(0,160))}if(!r.ok||!j.ok)throw new Error(j.error||'HTTP '+r.status);return j}
 
-function starfield(){const g=new THREE.BufferGeometry(),a=new Float32Array(8500*3),r=rand(8721);for(let i=0;i<8500;i++){const R=500+r()*2600,t=r()*Math.PI*2,p=Math.acos(2*r()-1);a[i*3]=R*Math.sin(p)*Math.cos(t);a[i*3+1]=R*Math.cos(p);a[i*3+2]=R*Math.sin(p)*Math.sin(t)}g.setAttribute('position',new THREE.BufferAttribute(a,3));const p=new THREE.Points(g,new THREE.PointsMaterial({color:0xc8d4ff,size:.75,transparent:true,opacity:.55,depthWrite:false}));scene.add(p);return p}const stars=starfield();
+function starfield(){const g=new THREE.BufferGeometry(),a=new Float32Array(6500*3),r=rand(8721);for(let i=0;i<6500;i++){const R=500+r()*2600,t=r()*Math.PI*2,p=Math.acos(2*r()-1);a[i*3]=R*Math.sin(p)*Math.cos(t);a[i*3+1]=R*Math.cos(p);a[i*3+2]=R*Math.sin(p)*Math.sin(t)}g.setAttribute('position',new THREE.BufferAttribute(a,3));const p=new THREE.Points(g,new THREE.PointsMaterial({color:0xc8d4ff,size:.75,transparent:true,opacity:.55,depthWrite:false}));scene.add(p);return p}const stars=starfield();
 
 function glowTexture(){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d'),g=x.createRadialGradient(64,64,0,64,64,64);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.12,'rgba(210,248,255,.8)');g.addColorStop(.42,'rgba(90,155,255,.16)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,128,128);return new THREE.CanvasTexture(c)}const glow=glowTexture();
 
 function spiralPos(id,index){const r=rand(hash(id)),arm=index%4,rank=Math.floor(index/4),radius=25+Math.sqrt(rank+1)*13.5;const angle=rank*.25+arm*Math.PI/2+r()*.4;return new THREE.Vector3(Math.cos(angle)*radius,(r()-.5)*70,Math.sin(angle)*radius)}
-function addLabel(obj,text){if(labels.length>220)return;const d=document.createElement('div');d.className='lu-burst-label';d.textContent=text.length>35?text.slice(0,34)+'…':text;host.appendChild(d);labels.push({el:d,obj,born:performance.now()})}
+function addLabel(obj,text){if(labels.length>70)return;const d=document.createElement('div');d.className='lu-burst-label';d.textContent=text.length>35?text.slice(0,34)+'…':text;host.appendChild(d);labels.push({el:d,obj,born:performance.now()})}
 function birth(n,index,instant=false){
  if(nodeMap.has(n.id))return;
  const pos=spiralPos(n.id,index), size=.55+Math.min(2.6,Math.log10(2+n.items)*.65);
  const mat=new THREE.MeshBasicMaterial({color:0xdff8ff,transparent:true,opacity:instant?.9:0});
  const m=new THREE.Mesh(nodeGeo,mat);m.position.copy(pos);m.scale.setScalar(instant?size:.01);m.userData={...n,type:'biblio',base:size,born:performance.now(),instant};world.add(m);clickable.push(m);nodeMap.set(n.id,m);
  const halo=new THREE.Sprite(new THREE.SpriteMaterial({map:glow,color:0x91dfff,transparent:true,opacity:.22,depthWrite:false,blending:THREE.AdditiveBlending}));halo.scale.set(size*7,size*7,1);m.add(halo);
- if(n.items>0){const ring=Math.min(9,2.5+Math.log2(n.items+1)*1.5),pts=[];for(let k=0;k<=48;k++){const a=k/48*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(a)*ring,0,Math.sin(a)*ring))}const l=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x655bd6,transparent:true,opacity:.13}));m.add(l)}
- if(!instant && labels.length<220)addLabel(m,n.title);
+ if(n.items>1){const ring=Math.min(9,2.5+Math.log2(n.items+1)*1.5),pts=[];for(let k=0;k<=48;k++){const a=k/48*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(a)*ring,0,Math.sin(a)*ring))}const l=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x655bd6,transparent:true,opacity:.075}));m.add(l)}
+ if(!instant && labels.length<70 && (index%7===0 || n.items>=8))addLabel(m,n.title);
 }
 function loanTrail(l){
  const target=nodeMap.get(l.biblio_id);if(!target)return;
@@ -49,9 +49,9 @@ function loanTrail(l){
  const start=new THREE.Vector3(Math.cos(ang)*rad,(r()-.5)*180,Math.sin(ang)*rad);
  const mid=start.clone().lerp(end,.5);mid.y+=50+(r()*80);
  const curve=new THREE.QuadraticBezierCurve3(start,mid,end),pts=curve.getPoints(28);
- const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0xffbd69,transparent:true,opacity:.08,blending:THREE.AdditiveBlending,depthWrite:false}));world.add(line);
+ const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0xffbd69,transparent:true,opacity:.12,blending:THREE.AdditiveBlending,depthWrite:false}));world.add(line);
  const dot=new THREE.Mesh(new THREE.SphereGeometry(.65,8,6),new THREE.MeshBasicMaterial({color:0xffe1a3,transparent:true,opacity:1,blending:THREE.AdditiveBlending}));world.add(dot);
- trails.push({line,dot,curve,start:performance.now(),dur:900+Math.random()*800,meta:l});if(trails.length>120){const z=trails.shift();world.remove(z.line,z.dot);z.line.geometry.dispose();z.line.material.dispose();z.dot.geometry.dispose();z.dot.material.dispose()}
+ trails.push({line,dot,curve,start:performance.now(),dur:900+r()*800,meta:l});if(trails.length>55){const z=trails.shift();world.remove(z.line,z.dot);z.line.geometry.dispose();z.line.material.dispose();z.dot.geometry.dispose();z.dot.material.dispose()}
  visibleLoans++;
 }
 function resetTo(ms){
@@ -69,7 +69,15 @@ function updateLabels(){const rect=host.getBoundingClientRect(),v=new THREE.Vect
 function animate(t){
  requestAnimationFrame(animate);const dt=Math.min(50,t-lastT||16);lastT=t;
  if(playing){const span=maxMs-minMs;currentMs+=dt/1000*(span/(75/Number(speedEl.value)));if(currentMs>=maxMs){currentMs=maxMs;playing=false;playBtn.textContent='▶'}updateTimeline();updateUI()}
- nodeMap.forEach(m=>{if(!m.userData.instant){const a=Math.min(1,(t-m.userData.born)/750),k=1-Math.pow(1-a,3);m.scale.setScalar(m.userData.base*k);m.material.opacity=.9*k}});
+ nodeMap.forEach(m=>{
+  if(!m.userData.instant){
+    const a=Math.min(1,(t-m.userData.born)/750),k=1-Math.pow(1-a,3);
+    m.scale.setScalar(m.userData.base*k);m.material.opacity=.9*k;
+  }
+  const age=Math.max(0,currentMs-(m.userData._t||parseDate(m.userData.date)));
+  const years=age/(365.25*86400000);
+  m.material.opacity=Math.max(.20,Math.min(m.material.opacity||.9,.92-years*.018));
+});
  for(let i=trails.length-1;i>=0;i--){const tr=trails[i],u=(t-tr.start)/tr.dur;if(u>=1){world.remove(tr.dot);tr.dot.geometry.dispose();tr.dot.material.dispose();tr.line.material.opacity*=.96;if(tr.line.material.opacity<.01){world.remove(tr.line);tr.line.geometry.dispose();tr.line.material.dispose();trails.splice(i,1)}}else{tr.dot.position.copy(tr.curve.getPoint(Math.max(0,u)));tr.dot.material.opacity=Math.sin(Math.PI*u)}}
  stars.rotation.y+=.000018;world.rotation.y+=.000035;controls.update();updateLabels();composer.render()
 }requestAnimationFrame(animate);

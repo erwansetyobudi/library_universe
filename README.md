@@ -26,3 +26,11 @@ Setelah plugin diaktifkan:
 ## Catatan
 Three.js dan addon yang dibutuhkan sudah dibundel lokal di dalam plugin. Tidak membutuhkan CDN dan aman untuk CSP yang hanya mengizinkan script dari self.
 Pastikan direktori `files/cache` dapat ditulis oleh web server bila ingin cache aktif.
+
+
+## v1.0.5
+- Visual lebih bersih: label, orbit, dan light trail aktif dibatasi.
+- Bintang koleksi lama meredup bertahap.
+- Durasi trail deterministik.
+- Background stars dikurangi untuk performa.
+- Cache API dinaikkan menjadi 30 menit dan tetap date-scoped.

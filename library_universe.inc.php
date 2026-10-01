@@ -2,7 +2,7 @@
 /*
  * File: library_universe.inc.php
  * Created on Thu Oct 01 2026
- * Last Updated: Thu Oct 01 2026 8:32:09 PM
+ * Last Updated: Thu Oct 01 2026 8:46:55 PM
  * Author: Erwan Setyo Budi
  * Email: erwans818@gmail.com
  * License: The GNU General Public License, Version 3 (GPL-3.0) - Copyright (C) 2026 Erwan Setyo Budi. This program is free software.
@@ -47,6 +47,6 @@ window.LIBRARY_UNIVERSE={
   detail: <?=json_encode(SWB.'index.php?p=show_detail&id=',JSON_UNESCAPED_SLASHES)?>
 };
 </script>
-<script type="module" src="<?=SWB?>plugins/library_universe/assets/js/universe.js?v=104"></script>
+<script type="module" src="<?=SWB?>plugins/library_universe/assets/js/universe.js?v=105"></script>
 </body></html>
 <?php exit; ?>

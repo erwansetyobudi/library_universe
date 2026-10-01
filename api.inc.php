@@ -2,7 +2,7 @@
 /*
  * File: api.inc.php
  * Created on Thu Oct 01 2026
- * Last Updated: Thu Oct 01 2026 8:32:50 PM
+ * Last Updated: Thu Oct 01 2026 8:46:28 PM
  * Author: Erwan Setyo Budi
  * Email: erwans818@gmail.com
  * License: The GNU General Public License, Version 3 (GPL-3.0) - Copyright (C) 2026 Erwan Setyo Budi. This program is free software.
@@ -47,7 +47,7 @@ try {
     $limit=max(100,min(12000,(int)($_GET['limit']??5000)));
 
     $cacheKey=$action.'|'.$start.'|'.$end.'|'.$limit.(isset($_GET['id'])?'|'.(int)$_GET['id']:'');
-    if(($cached=lu_cache_get($cacheKey,300))!==null){
+    if(($cached=lu_cache_get($cacheKey,1800))!==null){
         $cached['cache']=true;
         echo json_encode($cached,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); exit;
     }

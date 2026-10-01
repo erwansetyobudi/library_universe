@@ -2,7 +2,7 @@
 /*
  * File: helper.php
  * Created on Thu Oct 01 2026
- * Last Updated: Thu Oct 01 2026 8:32:32 PM
+ * Last Updated: Thu Oct 01 2026 8:46:44 PM
  * Author: Erwan Setyo Budi
  * Email: erwans818@gmail.com
  * License: The GNU General Public License, Version 3 (GPL-3.0) - Copyright (C) 2026 Erwan Setyo Budi. This program is free software.
@@ -19,7 +19,7 @@ function lu_cache_dir(): string {
     return $dir;
 }
 function lu_cache_file(string $key): string { return lu_cache_dir().DIRECTORY_SEPARATOR.sha1($key).'.json'; }
-function lu_cache_get(string $key, int $ttl=300) {
+function lu_cache_get(string $key, int $ttl=1800) {
     $f=lu_cache_file($key);
     if (!is_file($f) || time()-(int)@filemtime($f)>$ttl) return null;
     $j=@file_get_contents($f); if (!$j) return null;

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Library Universe
  * Description: Visualisasi pertumbuhan koleksi dan aktivitas peminjaman SLiMS sebagai universe interaktif.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: Erwan Setyo Budi
  */
 use SLiMS\Plugins;
